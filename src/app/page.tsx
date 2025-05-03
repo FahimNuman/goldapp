@@ -27,36 +27,15 @@ export default function Home() {
   const [savingsPlan, setSavingsPlan] = useState<string>('6 months');
   const [goldPriceUSD, setGoldPriceUSD] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
 
-  // Fetch gold price (mocked for now)
+  // Fetch gold price (mocked)
   useEffect(() => {
     const mockFetchGoldPrice = async () => {
-      try {
-        // Simulated API response: gold price in USD per troy ounce
-        const response: GoldPriceResponse = { data: { price: 3000 } }; // Example: $3000/oz
-        setGoldPriceUSD(response.data.price);
-        setLoading(false);
-      } catch (err) {
-        setError('Failed to fetch gold price');
-        setLoading(false);
-      }
+      // Simulated API response: gold price in USD per troy ounce
+      const response: GoldPriceResponse = { data: { price: 3000 } }; // Example: $3000/oz
+      setGoldPriceUSD(response.data.price);
+      setLoading(false);
     };
-
-    // For real API (e.g., metals-api.com), use:
-    /*
-    const fetchGoldPrice = async () => {
-      try {
-        const response = await fetch('https://metals-api.com/api/latest?access_key=YOUR_API_KEY&base=USD&symbols=XAU');
-        const data = await response.json();
-        setGoldPriceUSD(data.rates.XAU);
-        setLoading(false);
-      } catch (err) {
-        setError('Failed to fetch gold price');
-        setLoading(false);
-      }
-    };
-    */
 
     mockFetchGoldPrice();
   }, []);
@@ -64,7 +43,7 @@ export default function Home() {
   // Handle input change
   const handlePointsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setPoints(value >= '0' ? value : '');
+    setPoints(Number(value) >= 0 ? value : '');
   };
 
   // Handle savings plan change
@@ -133,6 +112,15 @@ export default function Home() {
           >
             Calculate Savings
           </button>
+          {/* Conversions Below Button */}
+          <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+            <h3 className="text-lg font-medium text-gray-700 mb-2">Conversions</h3>
+            <p className="text-gray-600">Vori: {points ? vori.toFixed(4) : '0.0000'}</p>
+            <p className="text-gray-600">Ana: {points ? ana.toFixed(4) : '0.0000'}</p>
+            <p className="text-gray-600">Roti: {points ? roti.toFixed(4) : '0.0000'}</p>
+            <p className="text-gray-600">Grams: {points ? grams.toFixed(4) : '0.0000'}</p>
+            <p className="text-gray-600">Points: {points || '0'}</p>
+          </div>
         </div>
 
         {/* Right Side: Results */}
@@ -140,8 +128,6 @@ export default function Home() {
           <h2 className="text-xl font-semibold mb-4 text-yellow-500">Savings Summary</h2>
           {loading ? (
             <p className="text-gray-600">Loading gold price...</p>
-          ) : error ? (
-            <p className="text-red-500">{error}</p>
           ) : (
             <div className="space-y-6">
               {/* Savings Plan */}
